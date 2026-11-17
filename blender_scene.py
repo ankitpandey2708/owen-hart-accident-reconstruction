@@ -1,15 +1,30 @@
 """Blender scene builder for the accident reconstruction.
-Usage: blender -b -P blender_scene.py -- <s3|s5> <out_dir> [start end] [--test]
+Usage: blender -b -P blender_scene.py -- <s3|s5> <out_dir> [start end]
+         [--res 540|720|1080|1440|2160] [--samples N] [--fast-lights] [--draft] [--test]
+Defaults reproduce the published render: 1080p, 16 samples, full lighting, EEVEE.
 Units: metres. Ring centred at origin. Mat surface z=1.2.
 """
-import bpy, bmesh, math, sys, random
+import bpy, bmesh, math, sys, random, argparse
 from mathutils import Vector, Euler
 
-argv = sys.argv[sys.argv.index("--") + 1:]
-MODE = argv[0]
-OUT = argv[1]
-TEST = "--test" in argv
-nums = [a for a in argv[2:] if a.lstrip("-").isdigit()]
+RES = {540: (960, 540), 720: (1280, 720), 1080: (1920, 1080), 1440: (2560, 1440), 2160: (3840, 2160)}
+ap = argparse.ArgumentParser(prog="blender_scene.py")
+ap.add_argument("mode", choices=["s3", "s5"])
+ap.add_argument("out")
+ap.add_argument("start", nargs="?", type=int)
+ap.add_argument("end", nargs="?", type=int)
+ap.add_argument("--res", type=int, choices=sorted(RES), default=1080, help="output height (16:9)")
+ap.add_argument("--samples", type=int, default=16, help="EEVEE anti-aliasing samples (1-64)")
+ap.add_argument("--fast-lights", action="store_true", help="hard shadows, drop two fill lights")
+ap.add_argument("--draft", action="store_true", help="Workbench engine: fast flat preview")
+ap.add_argument("--test", action="store_true", help="debug print; implies --res 540 unless --res given")
+args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:])
+if args.test and "--res" not in sys.argv:
+    args.res = 540
+if not 1 <= args.samples <= 64:
+    ap.error("--samples must be 1-64")
+MODE, OUT, TEST = args.mode, args.out, args.test
+nums = [args.start, args.end] if args.start is not None and args.end is not None else []
 
 FPS = 30
 G = 9.81
@@ -27,17 +42,23 @@ TF = math.sqrt(2 * DROP / G)      # ~2.17 s
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scn = bpy.context.scene
 bpy.context.preferences.edit.keyframe_new_interpolation_type = 'LINEAR'
-for eng in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):
+if args.draft:
+    scn.render.engine = 'BLENDER_WORKBENCH'
+    scn.display.shading.light = 'STUDIO'
+    scn.display.shading.color_type = 'MATERIAL'
+    scn.display.render_aa = '8'
+else:
+    for eng in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):
+        try:
+            scn.render.engine = eng
+            break
+        except TypeError:
+            pass
     try:
-        scn.render.engine = eng
-        break
-    except TypeError:
+        scn.eevee.taa_render_samples = args.samples
+    except Exception:
         pass
-try:
-    scn.eevee.taa_render_samples = 16
-except Exception:
-    pass
-scn.render.resolution_x, scn.render.resolution_y = (960, 540) if TEST else (1920, 1080)
+scn.render.resolution_x, scn.render.resolution_y = RES[args.res]
 scn.render.fps = FPS
 scn.render.image_settings.file_format = 'PNG'
 scn.view_settings.view_transform = 'AgX' if 'AgX' in [i.identifier for i in scn.view_settings.bl_rna.properties['view_transform'].enum_items] else 'Filmic'
@@ -51,6 +72,7 @@ world.node_tree.nodes["Background"].inputs[1].default_value = 1.0
 def mat(name, color, emit=0.0, rough=0.5, metal=0.0, emit_color=None):
     m = bpy.data.materials.new(name); m.use_nodes = True
     b = m.node_tree.nodes["Principled BSDF"]
+    m.diffuse_color = (*color, 1)   # used by --draft (Workbench)
     b.inputs["Base Color"].default_value = (*color, 1)
     b.inputs["Roughness"].default_value = rough
     b.inputs["Metallic"].default_value = metal
@@ -114,7 +136,7 @@ M_LABEL = mat("label", (1, 1, 1), emit=4.0)
 M_ACCENT = mat("accent", (1, 0.75, 0.1), emit=5.0)
 
 # crowd material: noise-driven colour variation
-M_CROWD = bpy.data.materials.new("crowd"); M_CROWD.use_nodes = True
+M_CROWD = bpy.data.materials.new("crowd"); M_CROWD.use_nodes = True; M_CROWD.diffuse_color = (0.2, 0.15, 0.13, 1)
 nt = M_CROWD.node_tree; bsdf = nt.nodes["Principled BSDF"]
 tc = nt.nodes.new("ShaderNodeTexCoord"); nz = nt.nodes.new("ShaderNodeTexNoise")
 nz.inputs["Scale"].default_value = 3.0
@@ -224,13 +246,17 @@ def light(kind, loc, energy, color=(1, 1, 1), size=1.0, target=(0, 0, MAT_Z), sp
     if kind == 'AREA': ld.size = size
     if kind == 'SPOT' and spot: ld.spot_size = spot; ld.spot_blend = 0.4
     o = bpy.data.objects.new("L", ld); scn.collection.objects.link(o)
+    if args.fast_lights:   # hard shadows
+        if kind == 'AREA': ld.size = min(ld.size, 1.0)
+        elif hasattr(ld, "shadow_soft_size"): ld.shadow_soft_size = 0.0
+        if hasattr(ld, "use_shadow_jitter"): ld.use_shadow_jitter = False
     o.location = loc; look_at(o, target); return o
 
 light('AREA', (0, 0, 9.5), 7000, (1, 0.97, 0.9), size=8)
 light('SPOT', (-12, -12, 14), 40000, (0.6, 0.7, 1.0), spot=math.radians(30))
-light('SPOT', (12, 12, 14), 25000, (1.0, 0.8, 0.6), spot=math.radians(30))
+if not args.fast_lights: light('SPOT', (12, 12, 14), 25000, (1.0, 0.8, 0.6), spot=math.radians(30))
 light('SPOT', (IMPACT.x, IMPACT.y - 6, RAFTER_Z - 1), 8000, (1, 1, 1), target=(IMPACT.x, IMPACT.y, CHEST_TOP), spot=math.radians(25))
-light('AREA', (0, 0, RAFTER_Z - 2), 1500, (0.5, 0.6, 1.0), size=30, target=(0, 0, 0))
+if not args.fast_lights: light('AREA', (0, 0, RAFTER_Z - 2), 1500, (0.5, 0.6, 1.0), size=30, target=(0, 0, 0))
 
 # ---------------------------------------------------------------- dummy (crash-test style)
 body = bpy.data.objects.new("body", None); scn.collection.objects.link(body)

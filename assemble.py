@@ -1,7 +1,16 @@
-"""Encode each scene clip with narration, concat, add subtitles.  python assemble.py"""
-import json, os, re, subprocess, glob
+"""Encode each scene clip with narration, concat, add subtitles.
+Usage: python assemble.py [--res 540|720|1080|1440|2160] [--crf N]
+Every scene is scaled to --res (default 1080), so Blender and three.js frames may differ in resolution."""
+import json, os, re, subprocess, glob, argparse
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 FPS = 30
+RES = {540: (960, 540), 720: (1280, 720), 1080: (1920, 1080), 1440: (2560, 1440), 2160: (3840, 2160)}
+ap = argparse.ArgumentParser()
+ap.add_argument("--res", type=int, choices=sorted(RES), default=1080)
+ap.add_argument("--crf", type=int, default=18, help="x264 quality, 0-51 (lower = better/larger)")
+args = ap.parse_args()
+OW, OH = RES[args.res]
+SC = f"scale={OW}:{OH}:flags=lanczos"
 ORDER = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"]
 AUDIO = {"s1": "s1_title", "s2": "s2_who", "s3": "s3_arena", "s4": "s4_rig", "s5": "s5_fall",
          "s6": "s6_after", "s7": "s7_lessons", "s8": "s8_memoriam"}
@@ -26,12 +35,12 @@ for s in ORDER:
     cmd = ["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", f"frames/{s}/%04d.png"]
     if s == "s5":
         cmd += ["-framerate", str(FPS), "-i", "frames/hud5/%04d.png", "-i", a,
-                "-filter_complex", f"[0][1]overlay=format=auto,{vf}[v];[2]adelay={int(LEAD*1000)}:all=1,apad[a]",
+                "-filter_complex", f"[0]{SC}[b];[1]{SC}[h];[b][h]overlay=format=auto,{vf}[v];[2]adelay={int(LEAD*1000)}:all=1,apad[a]",
                 "-map", "[v]", "-map", "[a]"]
     else:
-        cmd += ["-i", a, "-filter_complex", f"[0]{vf}[v];[1]adelay={int(LEAD*1000)}:all=1,apad[a]",
+        cmd += ["-i", a, "-filter_complex", f"[0]{SC},{vf}[v];[1]adelay={int(LEAD*1000)}:all=1,apad[a]",
                 "-map", "[v]", "-map", "[a]"]
-    cmd += ["-t", f"{d:.3f}", "-r", str(FPS), "-c:v", "libx264", "-crf", "18", "-preset", "medium",
+    cmd += ["-t", f"{d:.3f}", "-r", str(FPS), "-c:v", "libx264", "-crf", str(args.crf), "-preset", "medium",
             "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", f"clips/{s}.mp4"]
     run(cmd)
     starts[s] = (t, d)
