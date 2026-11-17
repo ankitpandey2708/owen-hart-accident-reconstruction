@@ -1,0 +1,30 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; }
+    #world-canvas { position:absolute; inset:0; width:1920px; height:1080px; }
+    .lb { position:absolute; left:0; top:0; opacity:0; font-family: Inter, sans-serif; color:#F2F0EA; font-size:36px; font-weight:700;
+          line-height:1.15; white-space:nowrap; padding:10px 18px 12px; background:rgba(8,8,10,.74); border-left:5px solid #F2F0EA;
+          margin:-40px 0 0 34px; }
+    .lb small { display:block; font-size:28px; font-weight:400; color:#d6d1c8; }
+    .lb.amber { border-color:#F2A93B; } .lb.red { border-color:#E0301E; } .lb.green { border-color:#3FBF7F; }
+    .lb .amber { color:#F2A93B; } .lb .red { color:#E0301E; }
+    .lb::before { content:""; position:absolute; left:-34px; top:40px; width:30px; height:3px; background:currentColor; opacity:.9; }
+  </style>
+  <div id="root" data-composition-id="world" data-width="1920" data-height="1080" data-layout-allow-overlap data-layout-allow-overflow>
+    <canvas id="world-canvas" width="1920" height="1080"></canvas>
+        <div id="lb-arena" class="lb ">Kemper Arena<small>Kansas City · May 23, 1999</small></div>
+    <div id="lb-height" class="lb amber"><span class="amber">78 ft</span><small>rafters to ring</small></div>
+    <div id="lb-plan" class="lb ">Planned release<small>a few feet above the mat</small></div>
+    <div id="lb-lanyard" class="lb red">Pull lanyard</div>
+    <div id="lb-rated" class="lb green">Rated locking connector</div>
+    <div id="lb-two" class="lb green">Second, independent line</div>
+    <div id="lb-noqr" class="lb green">No quick release on the load</div>
+  </div>
+  <script src="assets/timing.js"></script>
+  <script src="assets/world.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.set({}, {}, 71.375);
+    window.__timelines["world"] = tl;
+  </script>
+</template>

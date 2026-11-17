@@ -6,3 +6,13 @@ audio/
 *.blend1
 *.mp4
 *.srt
+tts/*-venv/
+tts/*.log
+video/assets/voice/
+video/renders/
+video/.hyperframes/
+video/node_modules/
+video/assets/bgm/
+video/assets/sfx/
+video/.media/
+video/audio_meta.json

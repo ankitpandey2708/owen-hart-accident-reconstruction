@@ -1,0 +1,44 @@
+{
+ "_note": "Narration, one entry per scene. Edit text here, then run: python ../tts/generate.py. Scene lengths follow the voice. hold_after = extra seconds of picture after a scene's voice (the silent real-time fall).",
+ "pad_after": 0.6,
+ "scenes": [
+  {
+   "id": "hook",
+   "text": "This is a snap shackle. Sailors use it to drop a line with one tug."
+  },
+  {
+   "id": "who",
+   "text": "On May 23rd, 1999, one of these was the only thing holding wrestler Owen Hart above the ring."
+  },
+  {
+   "id": "plan",
+   "text": "The stunt: lower him from the rafters, then release just above the mat, as a comedy fall."
+  },
+  {
+   "id": "release",
+   "text": "Instead, near the roof, it opened.",
+   "hold_after": 3.9
+  },
+  {
+   "id": "fall",
+   "text": "There was no backup line. He fell seventy-eight feet in about two seconds, reaching nearly fifty miles an hour."
+  },
+  {
+   "id": "impact",
+   "text": "He hit the top rope chest first, a foot from the turnbuckle. The impact severed his aorta."
+  },
+  {
+   "id": "after",
+   "text": "He was pronounced dead at 8:12 PM. He was thirty-four. The show went on."
+  },
+  {
+   "id": "fix",
+   "text": "A life-safety rig uses rated hardware, two independent lines, and no quick release on the load."
+  },
+  {
+   "id": "end",
+   "text": "No single part should ever hold a life alone.",
+   "hold_after": 2.4
+  }
+ ]
+}

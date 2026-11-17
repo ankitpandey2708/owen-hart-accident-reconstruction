@@ -1,0 +1,62 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; font-family: Inter, sans-serif; color:#F2F0EA; }
+    #root .clip { position:absolute; }
+    .in { opacity:0; }
+    .display .in { font-family: Oswald, sans-serif; font-weight:700; font-size:112px; letter-spacing:-0.01em; line-height:1; text-shadow:0 4px 30px rgba(0,0,0,.6); }
+    .num .in { font-family: Oswald, sans-serif; font-weight:700; font-size:150px; line-height:1; text-shadow:0 4px 30px rgba(0,0,0,.65); }
+    .num small { font-family: Inter, sans-serif; font-size:44px; font-weight:700; margin-left:14px; color:#F2F0EA; }
+    .note .in { font-size:28px; color:#cfcac0; text-shadow:0 2px 12px rgba(0,0,0,.8); }
+    .note-lg .in { font-size:40px; font-weight:400; color:#e6e1d8; text-shadow:0 2px 14px rgba(0,0,0,.8); }
+    .label .in { font-size:44px; font-weight:700; line-height:1.15; padding:14px 22px; background:rgba(8,8,10,.72); border-left:5px solid #F2A93B; }
+    .label small { display:block; font-size:28px; font-weight:400; color:#d6d1c8; }
+    .amber { color:#F2A93B; } .red { color:#E0301E; }
+    .dip { inset:0; } .dip .in { position:absolute; inset:0; background:#000; }
+  </style>
+  <div id="root" data-composition-id="overlay" data-width="1920" data-height="1080" data-layout-allow-overlap>
+        <div id="ov-hook" class="clip display" data-start="2.412" data-duration="4.013" data-track-index="1" style="left:140px; top:780px;"><div class="in"><span class="w">One part.</span> <span class="w amber">78 feet.</span></div></div>
+    <div id="ov-n1" class="clip num" data-start="34.763" data-duration="5.987" data-track-index="2" style="left:140px; top:150px;"><div class="in"><span class="w amber">78</span><small>ft</small></div></div>
+    <div id="ov-n2" class="clip num" data-start="36.288" data-duration="4.462" data-track-index="1" style="left:140px; top:330px;"><div class="in"><span class="w amber">2.2</span><small>s</small></div></div>
+    <div id="ov-n3" class="clip num" data-start="38.225" data-duration="2.525" data-track-index="2" style="left:140px; top:510px;"><div class="in"><span class="w amber">48</span><small>mph</small></div></div>
+    <div id="ov-n4" class="clip note" data-start="38.625" data-duration="2.125" data-track-index="1" style="left:146px; top:700px;"><div class="in">free-fall estimate from 78 ft</div></div>
+    <div id="ov-rope" class="clip label" data-start="42.075" data-duration="6.325" data-track-index="2" style="left:1180px; top:250px;"><div class="in">Top rope<small>~1 ft from the turnbuckle</small></div></div>
+    <div id="ov-aorta" class="clip label" data-start="46.8" data-duration="1.6" data-track-index="1" style="left:1180px; top:420px;"><div class="in"><span class="red">Severed aorta</span><small>blunt-force trauma</small></div></div>
+    <div id="ov-time" class="clip num" data-start="50.563" data-duration="4.987" data-track-index="2" style="left:140px; top:640px;"><div class="in"><span class="w">8:12</span><small>PM</small></div></div>
+    <div id="ov-age" class="clip note-lg" data-start="52.538" data-duration="3.012" data-track-index="1" style="left:146px; top:830px;"><div class="in">age 34</div></div>
+    <div id="ov-end" class="clip display" data-start="64.625" data-duration="6.7" data-track-index="2" style="left:0; right:0; top:420px; text-align:center;"><div class="in">No single point of failure.</div></div>
+    <div id="ov-name" class="clip note-lg" data-start="68.975" data-duration="2.35" data-track-index="1" style="left:0; right:0; top:560px; text-align:center;"><div class="in">Owen Hart &nbsp;·&nbsp; 1965 – 1999</div></div>
+    <div id="ov-dip0" class="clip dip" data-start="31.575" data-duration="0.2" data-track-index="3"><div class="in"></div></div>
+    <div id="ov-dip1" class="clip dip" data-start="48.4" data-duration="0.2" data-track-index="3"><div class="in"></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+        tl.fromTo("#ov-hook .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 2.412);
+    tl.to("#ov-hook .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 6.305);
+    tl.fromTo("#ov-n1 .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 34.763);
+    tl.to("#ov-n1 .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 40.63);
+    tl.fromTo("#ov-n2 .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 36.288);
+    tl.to("#ov-n2 .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 40.63);
+    tl.fromTo("#ov-n3 .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 38.225);
+    tl.to("#ov-n3 .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 40.63);
+    tl.fromTo("#ov-n4 .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 38.625);
+    tl.to("#ov-n4 .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 40.63);
+    tl.fromTo("#ov-rope .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 42.075);
+    tl.to("#ov-rope .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 48.28);
+    tl.fromTo("#ov-aorta .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 46.8);
+    tl.to("#ov-aorta .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 48.28);
+    tl.fromTo("#ov-time .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 50.563);
+    tl.to("#ov-time .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 55.43);
+    tl.fromTo("#ov-age .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 52.538);
+    tl.to("#ov-age .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 55.43);
+    tl.fromTo("#ov-end .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 64.625);
+    tl.to("#ov-end .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 71.205);
+    tl.fromTo("#ov-name .in", {opacity:0, filter:"blur(8px)"}, {opacity:1, filter:"blur(0px)", duration:0.18, ease:"expo.out"}, 68.975);
+    tl.to("#ov-name .in", {opacity:0, filter:"blur(6px)", duration:0.12, ease:"power2.in"}, 71.205);
+    tl.fromTo("#ov-dip0 .in", {opacity:0}, {opacity:1, duration:0.1, ease:"none"}, 31.575);
+    tl.to("#ov-dip0 .in", {opacity:0, duration:0.1, ease:"none"}, 31.675);
+    tl.fromTo("#ov-dip1 .in", {opacity:0}, {opacity:1, duration:0.1, ease:"none"}, 48.4);
+    tl.to("#ov-dip1 .in", {opacity:0, duration:0.1, ease:"none"}, 48.5);
+    tl.set({}, {}, 71.375);
+    window.__timelines["overlay"] = tl;
+  </script>
+</template>

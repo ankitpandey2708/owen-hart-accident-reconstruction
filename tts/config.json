@@ -1,0 +1,17 @@
+{
+  "_engines": "engine: kokoro | chatterbox",
+  "engine": "kokoro",
+  "kokoro": {
+    "voice": "am_michael",
+    "_voices": "am_michael, am_adam, bm_george, bm_lewis, af_heart, bf_emma (54 total)",
+    "speed": 0.95
+  },
+  "chatterbox": {
+    "exaggeration": 0.35,
+    "cfg_weight": 0.5,
+    "temperature": 0.7,
+    "seed": 7,
+    "_voice_prompt": "optional path to a 10 s reference WAV to clone; null = built-in voice",
+    "voice_prompt": null
+  }
+}
