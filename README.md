@@ -27,7 +27,7 @@ video/                     HyperFrames project
   SPEC.md, STORYLINES.md   director's brief and the three storylines considered
   build.py                 timing -> index.html, compositions/*.html, assets/timing.js, subtitles.srt
   assets/world.js          the three.js world (one continuous take, pure function of time)
-  assets/lib/              vendored three.js
+  assets/lib/              vendored three.js (r170)
 tts/
   config.json              engine + voice settings
   generate.py, worker.py   synthesis, loudness normalization (-16 LUFS), word timings
@@ -50,7 +50,6 @@ cd ..
 ./render_all.sh
 ffmpeg -framerate 30 -start_number 225 -i frames/s5/%04d.png -frames:v 260 -c:v libx264 -crf 16 -pix_fmt yuv420p video/assets/footage/replay_fall.mp4
 ffmpeg -framerate 30 -start_number 485 -i frames/s5/%04d.png -frames:v 240 -c:v libx264 -crf 16 -pix_fmt yuv420p video/assets/footage/replay_impact.mp4
-cp node_modules/three/build/three.module.min.js video/assets/lib/
 
 # 3. music + sound effects (needs `npx hyperframes auth login`, free)
 #    music: video/audio_request.json -> assets/bgm/track.mp3
