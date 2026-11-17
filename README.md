@@ -17,6 +17,39 @@ The reconstruction uses a **generic crash-test mannequin**, never a likeness of 
 | Music | HeyGen catalog via HyperFrames `media-use` (free sign-in) |
 | Encode | ffmpeg (inside HyperFrames) |
 
+**Finishing:** the 3D world renders 8 sub-frames per frame across a 180° shutter (true motion blur, averaged in linear HDR), then one grade pass: ACES tone map, cool-shadow/warm-highlight split, saturation 0.9, gentle S-curve, vignette and frame-seeded grain. The Blender replay clips get the matched grade through HyperFrames `media-treatment` (`video/grade_replay.json`).
+
+## How this stack compares
+
+Organised by production stage: each layer appears once, and together they cover the whole film.
+
+| Stage | Layer | This project | Code-driven explainer creators (2026) | Professional motion studios |
+|---|---|---|---|---|
+| **1. Pre-production** | Research & script | Sourced facts → `video/script.json` (138 words, ≤19 per scene) | LLM-drafted script, light fact-check | Researcher + scriptwriter, legal/fact review |
+| | Story & spec | `STORYLINES.md` (3 options) → `SPEC.md` (numbers, banned defaults, QA frames) | Prompt or short brief | Treatment, storyboard, animatic |
+| **2. Assets** | 3D models | Modelled snap shackle and harness, steel trusses, catwalk; primitive mannequin | Bought or kit-bashed models | Custom-modelled, textured hero assets |
+| | 2D graphics & type | HTML/CSS labels on objects, numbers, titles (Oswald / Inter) | Registry blocks, kinetic-type templates | Designed in Illustrator / After Effects |
+| | Voice | Kokoro / Chatterbox, local, config-switchable | ElevenLabs / HeyGen voices | Directed human voice actor |
+| | Music & effects | HeyGen catalog bed + 4 effects | Catalog bed + effects library | Composer + sound designer (foley, room tone) |
+| **3. Animation** | Camera & motion | One continuous three.js take + GSAP, cues keyed to word timings | Template moves, GSAP / Remotion springs | Keyframed by animators, previs |
+| **4. Rendering** | 3D render & lighting | three.js raster (spots, rim, env map) + Blender EEVEE replay | three.js raster, sometimes path-traced | Cinema 4D / Blender Cycles, global illumination |
+| | Motion blur | True sub-frame: 8 samples, 180° shutter, linear HDR | Per-element blur or none | Render-engine motion blur |
+| **5. Post** | Edit & compositing | HyperFrames timeline: world, replay footage, overlay | HyperFrames or Remotion | After Effects + Premiere / DaVinci Resolve |
+| | Grade & finishing | Shader grade (split-tone, S-curve, vignette, grain) + matched `media-treatment` on footage | LUT or preset | Colourist |
+| | Captions | `subtitles.srt` sidecar from word timings | Burned-in word captions | Subtitle vendor, burned-in or sidecar |
+| **6. Audio post** | Mix & loudness | Per-line −16 LUFS normalization, bed levels and fades; final −13.4 LUFS, −1 dBTP | Ducking + normalize | Re-recording mixer |
+| **7. Delivery** | Encode & format | ffmpeg via HyperFrames, H.264/AAC 1080p30 | Same | Mastering + per-platform deliverables |
+| **8. QA** | Review | `hyperframes check` + snapshot passes against `SPEC.md` | Agent passes + human eyes | Director and client review rounds |
+
+**On par with code-driven creators:** timeline tooling, motion blur, grading and the hardware close-ups. The re-timing is ahead of hand-edited workflows: edit a sentence and the whole film follows the voice.
+
+**Remaining gaps, biggest first:**
+1. **Voice:** local TTS is still recognisably synthetic. A cloud voice (HeyGen or ElevenLabs) or a human narrator closes most of it.
+2. **Lighting realism:** raster lighting has no bounced light and only approximate soft shadows. HyperFrames' path-traced three.js export would close this, at roughly 75× the render time.
+3. **Mannequin:** built from primitives, deliberately generic so it never resembles the real person.
+4. **Sound design:** a thin layer, missing cable creak, arena room tone and crowd ambience.
+5. **Human review:** no director or client review rounds yet.
+
 **The voice is the clock:** `tts/generate.py` writes the per-word timings, and `video/build.py` derives scene lengths, label cues, audio placement and subtitles from them. Edit `video/script.json`, re-run both scripts, and the whole film re-times.
 
 ## Layout

@@ -124,6 +124,9 @@ world = f"""<template>
 """
 
 # ---------------------------------------------------------------- root: scene hosts, footage, audio
+# Replay footage grade, matched to the 3D world's grade pass (assets/world.js). Validated with
+# `npx hyperframes media-treatment --grading grade_replay.json --dry-run`.
+GRADE = json.dumps(json.load(open(os.path.join(HERE, 'grade_replay.json'))), separators=(',', ':'))
 SFX = [  # (id, file, start, volume, fade_out)
     ("sfx-latch", "assets/sfx/latch.mp3", 0.3, 0.9, 0),
     ("sfx-snap", "assets/sfx/latch.mp3", T_OPEN, 1.0, 0),
@@ -167,8 +170,8 @@ index = f"""<!doctype html>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{r3(TOTAL)}" data-width="1920" data-height="1080">
       <div id="world" data-composition-id="world" data-composition-src="compositions/world.html" data-start="0" data-duration="{r3(TOTAL)}" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index:1"></div>
-      <video id="replay-fall" class="clip footage" src="assets/footage/replay_fall.mp4" data-start="{r3(S['fall']['start'])}" data-duration="{r3(S['fall']['duration'])}" data-track-index="2" muted playsinline style="z-index:2"></video>
-      <video id="replay-impact" class="clip footage" src="assets/footage/replay_impact.mp4" data-start="{r3(S['impact']['start'])}" data-duration="{r3(S['impact']['duration'])}" data-track-index="2" muted playsinline style="z-index:2"></video>
+      <video id="replay-fall" class="clip footage" src="assets/footage/replay_fall.mp4" data-color-grading='{GRADE}' data-start="{r3(S['fall']['start'])}" data-duration="{r3(S['fall']['duration'])}" data-track-index="2" muted playsinline style="z-index:2"></video>
+      <video id="replay-impact" class="clip footage" src="assets/footage/replay_impact.mp4" data-color-grading='{GRADE}' data-start="{r3(S['impact']['start'])}" data-duration="{r3(S['impact']['duration'])}" data-track-index="2" muted playsinline style="z-index:2"></video>
       <div id="overlay" data-composition-id="overlay" data-composition-src="compositions/overlay.html" data-start="0" data-duration="{r3(TOTAL)}" data-track-index="3" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index:3"></div>
 {voice}
 {bgm}
