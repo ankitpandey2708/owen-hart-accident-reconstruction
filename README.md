@@ -6,6 +6,8 @@ A 71-second narrated explainer about the rigging failure that killed professiona
 
 The reconstruction uses a **generic crash-test mannequin**, never a likeness of the person. The fall is free-fall physics (2.17 s for the drop, about 48 mph) from the commonly reported height of ~78 ft; some reports give ~90 ft.
 
+**Storytelling framework:** [`DIRECTORS_FRAMEWORK.md`](DIRECTORS_FRAMEWORK.md) is a reusable, genre-agnostic framework (audience, controlling idea, structure, scene design, visuals, sound, words, endings, ethics, process and review rubric) for planning and reviewing any video, not only this one.
+
 ## Stack
 
 | Layer | Tool |
