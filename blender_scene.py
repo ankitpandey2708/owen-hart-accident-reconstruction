@@ -1,6 +1,6 @@
 """Blender scene builder for the accident reconstruction.
 Usage: blender -b -P blender_scene.py -- <s3|s5> <out_dir> [start end]
-         [--res 540|720|1080|1440|2160] [--samples N] [--fast-lights] [--draft] [--test]
+         [--res 540|720|1080|1440|2160] [--samples N] [--fast-lights] [--draft]
 Defaults reproduce the published render: 1080p, 16 samples, full lighting, EEVEE.
 Units: metres. Ring centred at origin. Mat surface z=1.2.
 """
@@ -17,13 +17,10 @@ ap.add_argument("--res", type=int, choices=sorted(RES), default=1080, help="outp
 ap.add_argument("--samples", type=int, default=16, help="EEVEE anti-aliasing samples (1-64)")
 ap.add_argument("--fast-lights", action="store_true", help="hard shadows, drop two fill lights")
 ap.add_argument("--draft", action="store_true", help="Workbench engine: fast flat preview")
-ap.add_argument("--test", action="store_true", help="debug print; implies --res 540 unless --res given")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:])
-if args.test and "--res" not in sys.argv:
-    args.res = 540
 if not 1 <= args.samples <= 64:
     ap.error("--samples must be 1-64")
-MODE, OUT, TEST = args.mode, args.out, args.test
+MODE, OUT = args.mode, args.out
 nums = [args.start, args.end] if args.start is not None and args.end is not None else []
 
 FPS = 30
@@ -456,11 +453,5 @@ elif MODE == "s5":
 if nums:
     scn.frame_start, scn.frame_end = int(nums[0]), int(nums[1])
 scn.render.filepath = OUT.rstrip("/\\") + "/"
-if TEST:
-    scn.frame_set(scn.frame_start)
-    cam = scn.camera
-    print("DBG ENGINE", scn.render.engine, "CAM", cam.name, tuple(round(v, 2) for v in cam.matrix_world.translation),
-          "FWD", tuple(round(v, 2) for v in (cam.matrix_world.to_3x3() @ Vector((0, 0, -1)))),
-          "BODY", tuple(round(v, 2) for v in body.matrix_world.translation))
 bpy.ops.wm.save_as_mainfile(filepath=OUT.rstrip("/\\") + f"_{MODE}.blend")
 bpy.ops.render.render(animation=True)

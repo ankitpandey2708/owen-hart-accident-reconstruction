@@ -58,7 +58,6 @@ blender -b -P blender_scene.py -- s5 /abs/out/dir 485 725 --samples 12
 | `--samples` | integer `1`–`64` | `16` | EEVEE anti-aliasing / soft-shadow samples | 8 → ~1.5× |
 | `--fast-lights` | flag (on/off) | off | Hard shadows, drops two fill lights | ~1.3× |
 | `--draft` | flag (on/off) | off | Workbench engine: flat colours, no glow or real shadows. Ignores `--samples` | ~10× |
-| `--test` | flag (on/off) | off | Prints camera/body debug info; implies `--res 540` unless `--res` is given | — |
 | `start end` | two frame numbers | full scene | Render only that frame range | — |
 
 Trade-offs: lower `--res` softens thin cables and ropes. Fewer `--samples` adds edge shimmer and grainy shadows. `--fast-lights` gives a darker, flatter, harder-edged look. `--draft` is for checking cameras and timing only, not for a deliverable.
