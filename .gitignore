@@ -1,0 +1,8 @@
+node_modules/
+frames/
+clips/
+audio/
+*.blend
+*.blend1
+*.mp4
+*.srt
